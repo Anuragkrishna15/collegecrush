@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+
+import * as React from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { fetchProfiles, recordSwipe, fetchAds } from '../../services/api.ts';
 import { Profile, MembershipType, Screen, Ad, Swipeable } from '../../types.ts';
@@ -13,9 +14,6 @@ import { X, Heart, Users, AlertTriangle, RefreshCw } from 'lucide-react';
 
 const SWIPE_LIMIT = 5;
 
-const MotionButton = motion.button as any;
-const MotionDiv = motion.div as any;
-
 interface SwipeButtonProps {
     children: React.ReactNode;
     onClick: () => void;
@@ -26,7 +24,7 @@ interface SwipeButtonProps {
 
 function SwipeButton({ children, onClick, className, ariaLabel, disabled }: SwipeButtonProps) {
     return (
-        <MotionButton
+        <motion.button
             onClick={onClick}
             disabled={disabled}
             aria-label={ariaLabel}
@@ -36,7 +34,7 @@ function SwipeButton({ children, onClick, className, ariaLabel, disabled }: Swip
             className={`w-24 h-24 flex items-center justify-center rounded-full bg-zinc-900/50 backdrop-blur-md border border-white/10 shadow-2xl transition-colors disabled:opacity-50 ${className}`}
         >
             {children}
-        </MotionButton>
+        </motion.button>
     );
 }
 
@@ -65,14 +63,14 @@ const getTodaysSwipeData = () => {
 
 
 function SwipeScreen({ onProfileClick, onGoToChat, setActiveScreen }: SwipeScreenProps) {
-    const [profiles, setProfiles] = useState<Profile[]>([]);
-    const [ads, setAds] = useState<Ad[]>([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [showMatchPopup, setShowMatchPopup] = useState(false);
-    const [matchedProfile, setMatchedProfile] = useState<Profile | null>(null);
-    const [swipesToday, setSwipesToday] = useState(getTodaysSwipeData().count);
+    const [profiles, setProfiles] = React.useState<Profile[]>([]);
+    const [ads, setAds] = React.useState<Ad[]>([]);
+    const [currentIndex, setCurrentIndex] = React.useState(0);
+    const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState<string | null>(null);
+    const [showMatchPopup, setShowMatchPopup] = React.useState(false);
+    const [matchedProfile, setMatchedProfile] = React.useState<Profile | null>(null);
+    const [swipesToday, setSwipesToday] = React.useState(getTodaysSwipeData().count);
     const { user } = useUser();
     const { showNotification } = useNotification();
 
@@ -81,7 +79,7 @@ function SwipeScreen({ onProfileClick, onGoToChat, setActiveScreen }: SwipeScree
     const likeOpacity = useTransform(x, [20, 100], [0, 1]);
     const nopeOpacity = useTransform(x, [-100, -20], [1, 0]);
 
-    const swipeDeck = useMemo((): Swipeable[] => {
+    const swipeDeck = React.useMemo((): Swipeable[] => {
         if (!user || user.membership !== MembershipType.Free || ads.length === 0 || profiles.length === 0) {
             return profiles;
         }
@@ -96,7 +94,7 @@ function SwipeScreen({ onProfileClick, onGoToChat, setActiveScreen }: SwipeScree
         return interleaved;
     }, [profiles, ads, user]);
 
-    const loadData = useCallback(() => {
+    const loadData = React.useCallback(() => {
         if (user) {
             setLoading(true);
             setError(null);
@@ -116,16 +114,16 @@ function SwipeScreen({ onProfileClick, onGoToChat, setActiveScreen }: SwipeScree
         }
     }, [user]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         loadData();
     }, [loadData]);
 
-    const advanceProfile = useCallback(() => {
+    const advanceProfile = React.useCallback(() => {
         x.set(0);
         setCurrentIndex(prevIndex => prevIndex + 1);
     }, [x]);
 
-    const handleSwipe = useCallback(async (direction: 'left' | 'right') => {
+    const handleSwipe = React.useCallback(async (direction: 'left' | 'right') => {
         if (!user || currentIndex >= swipeDeck.length) return;
 
         const swipedItem = swipeDeck[currentIndex];
@@ -203,18 +201,20 @@ function SwipeScreen({ onProfileClick, onGoToChat, setActiveScreen }: SwipeScree
                            const key = isAd ? `ad-${item.id}` : `profile-${item.id}`;
 
                             return (
-                                <MotionDiv
+                                <motion.div
                                     key={key}
                                     className="absolute w-full h-full"
-                                    style={{ zIndex: index }}
+                                    style={{
+                                        zIndex: index,
+                                        x: isTopCard ? x : 0,
+                                        rotate: isTopCard ? rotate : 0,
+                                    }}
                                     animate={{
                                         scale: isTopCard ? 1 : 0.95,
                                         y: isTopCard ? 0 : -25,
                                         opacity: isTopCard ? 1 : 0.8,
                                     }}
                                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                    x={isTopCard ? x : 0}
-                                    rotate={isTopCard ? rotate : 0}
                                     drag={isTopCard ? "x" : false}
                                     dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
                                     onDragEnd={isTopCard ? handleDragEnd : undefined}
@@ -228,22 +228,22 @@ function SwipeScreen({ onProfileClick, onGoToChat, setActiveScreen }: SwipeScree
 
                                        {isTopCard && !isAd && (
                                           <>
-                                              <MotionDiv
+                                              <motion.div
                                                   style={{ opacity: likeOpacity }}
                                                   className="absolute top-12 left-8 transform -rotate-20 text-pink-400 font-extrabold text-7xl border-4 border-pink-400 p-2 rounded-xl pointer-events-none z-20 bg-black/30 backdrop-blur-md shadow-2xl shadow-pink-500/50"
                                               >
                                                   LIKE
-                                              </MotionDiv>
-                                              <MotionDiv
+                                              </motion.div>
+                                              <motion.div
                                                   style={{ opacity: nopeOpacity }}
                                                   className="absolute top-12 right-8 transform rotate-20 text-red-500 font-extrabold text-7xl border-4 border-red-500 p-2 rounded-xl pointer-events-none z-20 bg-black/30 backdrop-blur-md shadow-2xl shadow-red-500/50"
                                               >
                                                   NOPE
-                                              </MotionDiv>
+                                              </motion.div>
                                           </>
                                        )}
                                     </div>
-                                </MotionDiv>
+                                </motion.div>
                             )
                         })}
                     </div>

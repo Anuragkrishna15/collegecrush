@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import * as React from 'react';
 import { Conversation } from '../../../types.ts';
 import { fetchConversations } from '../../../services/api.ts';
 import { useUser } from '../../../hooks/useUser.ts';
@@ -33,11 +34,11 @@ const ConversationItem: React.FC<ConversationItemProps> = React.memo(({ conversa
 });
 
 const ChatListScreen: React.FC<{ onConversationSelect: (conversation: Conversation) => void; }> = ({ onConversationSelect }) => {
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [conversations, setConversations] = React.useState<Conversation[]>([]);
+  const [loading, setLoading] = React.useState(true);
   const { user } = useUser();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (user?.id) {
       setLoading(true);
       fetchConversations(user.id)

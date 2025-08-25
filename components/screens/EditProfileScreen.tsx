@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+
+import * as React from 'react';
 import { updateProfile, uploadProfilePicture } from '../../services/api.ts';
 import { ProfileOnboardingData, Prompt } from '../../types.ts';
 import LoadingSpinner from '../LoadingSpinner.tsx';
@@ -11,8 +12,6 @@ import { getOptimizedUrl } from '../../utils/date.ts';
 import type { Database } from '../../services/database.types.ts';
 import { motion } from 'framer-motion';
 import { Json } from '../../services/database.types.ts';
-
-const MotionButton = motion.button as any;
 
 interface EditProfileScreenProps {
   onProfileUpdate: () => void;
@@ -35,26 +34,26 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({ onProfileUpdate }
   const { user } = useUser();
   const { showNotification } = useNotification();
   
-  const [formData, setFormData] = useState<Omit<ProfileOnboardingData, 'tags' | 'prompts'>>({
+  const [formData, setFormData] = React.useState<Omit<ProfileOnboardingData, 'tags' | 'prompts'>>({
     name: '',
     dob: '',
     gender: 'Male',
     bio: '',
     course: ''
   });
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [pictures, setPictures] = useState<string[]>([]);
-  const [prompts, setPrompts] = useState<(Prompt | null)[]>([null, null, null]);
-  const [newPicFile, setNewPicFile] = useState<File | null>(null);
-  const [newPicPreview, setNewPicPreview] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
+  const [pictures, setPictures] = React.useState<string[]>([]);
+  const [prompts, setPrompts] = React.useState<(Prompt | null)[]>([null, null, null]);
+  const [newPicFile, setNewPicFile] = React.useState<File | null>(null);
+  const [newPicPreview, setNewPicPreview] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   // For Drag and Drop
-  const dragItem = useRef<number | null>(null);
-  const dragOverItem = useRef<number | null>(null);
+  const dragItem = React.useRef<number | null>(null);
+  const dragOverItem = React.useRef<number | null>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (user) {
       setFormData({
         name: user.name,
@@ -272,12 +271,12 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({ onProfileUpdate }
           </div>
 
           <div>
-            <MotionButton 
+            <motion.button 
               whileTap={{ scale: 0.95 }}
               type="submit" disabled={loading}
               className={`w-full mt-4 py-3 rounded-lg font-semibold text-white bg-gradient-to-r ${PREMIUM_GRADIENT} hover:opacity-90 transition-opacity disabled:opacity-50 flex justify-center items-center`}>
               {loading ? <LoadingSpinner /> : 'Save Changes'}
-            </MotionButton>
+            </motion.button>
           </div>
           {error && <p className="text-red-400 text-sm mt-4 text-center">{error}</p>}
         </form>
@@ -287,7 +286,7 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({ onProfileUpdate }
 };
 
 const PromptEditor: React.FC<{prompt: Prompt | null, onChange: (prompt: Prompt | null) => void, usedQuestions: string[]}> = ({ prompt, onChange, usedQuestions }) => {
-    const [isChoosing, setIsChoosing] = useState(false);
+    const [isChoosing, setIsChoosing] = React.useState(false);
     
     const handleQuestionSelect = (question: string) => {
         onChange({ question, answer: prompt?.answer || '' });

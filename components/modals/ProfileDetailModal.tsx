@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+
+import * as React from 'react';
 import { Profile, User, MembershipType } from '../../types.ts';
 import { useUser } from '../../hooks/useUser.ts';
 import { useNotification } from '../../hooks/useNotification.ts';
@@ -10,8 +11,6 @@ import ReportBlockModal from './ReportBlockModal.tsx';
 import { X, MessageSquare, ChevronLeft, ChevronRight, Flag, Lock, Crown } from 'lucide-react';
 import { formatCommentDate, getOptimizedUrl } from '../../utils/date.ts';
 
-const MotionDiv = motion.div as any;
-
 interface ProfileDetailModalProps {
     profile: Profile;
     onClose: () => void;
@@ -20,17 +19,17 @@ interface ProfileDetailModalProps {
 function ProfileDetailModal({ profile: initialProfile, onClose }: ProfileDetailModalProps) {
     const { user } = useUser();
     const { showNotification } = useNotification();
-    const [fullProfile, setFullProfile] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [newComment, setNewComment] = useState('');
-    const [isCommenting, setIsCommenting] = useState(false);
-    const [showReportModal, setShowReportModal] = useState(false);
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const scrollRef = useRef<HTMLDivElement>(null);
-    const modalContentRef = useRef<HTMLDivElement>(null);
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const [fullProfile, setFullProfile] = React.useState<User | null>(null);
+    const [loading, setLoading] = React.useState(true);
+    const [newComment, setNewComment] = React.useState('');
+    const [isCommenting, setIsCommenting] = React.useState(false);
+    const [showReportModal, setShowReportModal] = React.useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+    const scrollRef = React.useRef<HTMLDivElement>(null);
+    const modalContentRef = React.useRef<HTMLDivElement>(null);
+    const textareaRef = React.useRef<HTMLTextAreaElement>(null);
     
-    useEffect(() => {
+    React.useEffect(() => {
         setLoading(true);
         getProfile(initialProfile.id)
             .then(profileData => {
@@ -46,7 +45,7 @@ function ProfileDetailModal({ profile: initialProfile, onClose }: ProfileDetailM
             .finally(() => setLoading(false));
     }, [initialProfile.id, showNotification, onClose]);
     
-    useEffect(() => {
+    React.useEffect(() => {
         // Disable body scroll when modal is open
         document.body.style.overflow = 'hidden';
         return () => {
@@ -55,7 +54,7 @@ function ProfileDetailModal({ profile: initialProfile, onClose }: ProfileDetailM
     }, []);
 
     // Auto-growing textarea effect
-    useEffect(() => {
+    React.useEffect(() => {
         const textarea = textareaRef.current;
         if (textarea) {
             textarea.style.height = 'auto';
@@ -118,14 +117,14 @@ function ProfileDetailModal({ profile: initialProfile, onClose }: ProfileDetailM
 
     return (
         <>
-        <MotionDiv
+        <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4"
             onClick={onClose}
         >
-            <MotionDiv
+            <motion.div
                 ref={modalContentRef}
                 layout
                 initial={{ scale: 0.9, opacity: 0 }}
@@ -248,8 +247,8 @@ function ProfileDetailModal({ profile: initialProfile, onClose }: ProfileDetailM
                     </div>
                     </>
                 )}
-            </MotionDiv>
-        </MotionDiv>
+            </motion.div>
+        </motion.div>
         {showReportModal && user && (
             <ReportBlockModal 
                 reportingUser={user} 

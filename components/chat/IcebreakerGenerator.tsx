@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import * as React from 'react';
 import { Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { generateIcebreakers } from '../../services/gemini.ts';
@@ -6,17 +7,15 @@ import { BasicProfile } from '../../types.ts';
 import LoadingSpinner from '../LoadingSpinner.tsx';
 import { useNotification } from '../../hooks/useNotification.ts';
 
-const MotionDiv = motion.div as any;
-
 interface IcebreakerGeneratorProps {
     otherUser: BasicProfile;
     onSelect: (icebreaker: string) => void;
 }
 
 export const IcebreakerGenerator: React.FC<IcebreakerGeneratorProps> = ({ otherUser, onSelect }) => {
-    const [loading, setLoading] = useState(false);
-    const [suggestions, setSuggestions] = useState<string[]>([]);
-    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [loading, setLoading] = React.useState(false);
+    const [suggestions, setSuggestions] = React.useState<string[]>([]);
+    const [showSuggestions, setShowSuggestions] = React.useState(false);
     const { showNotification } = useNotification();
 
     const handleGenerate = async () => {
@@ -55,7 +54,7 @@ export const IcebreakerGenerator: React.FC<IcebreakerGeneratorProps> = ({ otherU
             </button>
 
             {showSuggestions && (
-                 <MotionDiv
+                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
@@ -84,7 +83,7 @@ export const IcebreakerGenerator: React.FC<IcebreakerGeneratorProps> = ({ otherU
                             </button>
                         </div>
                     )}
-                </MotionDiv>
+                </motion.div>
             )}
         </div>
     );

@@ -1,6 +1,6 @@
 
 
-import React, { useState } from 'react';
+import * as React from 'react';
 import { Screen } from '../../types.ts';
 import { User, Bell, Shield, Trash2, ChevronRight, Moon, Sun, Monitor, MessageSquare, FileText } from 'lucide-react';
 import { useUser } from '../../hooks/useUser.ts';
@@ -12,15 +12,15 @@ import { FEEDBACK_EMAIL } from '../../constants.tsx';
 const SettingsScreen: React.FC<{setActiveScreen: (screen: Screen) => void}> = ({ setActiveScreen }) => {
     const { logout } = useUser();
     const { showNotification } = useNotification();
-    const [isDeleting, setIsDeleting] = useState(false);
+    const [isDeleting, setIsDeleting] = React.useState(false);
     
-    const [notifications, setNotifications] = useState({
+    const [notifications, setNotifications] = React.useState({
         matches: true,
         messages: true,
         events: false
     });
 
-    const [privacy, setPrivacy] = useState({
+    const [privacy, setPrivacy] = React.useState({
         showInSwipe: true,
     });
     

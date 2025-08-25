@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect, useCallback } from 'react';
+import * as React from 'react';
 import { fetchEvents, rsvpEvent } from '../../services/api.ts';
 import { CollegeEvent } from '../../types.ts';
 import { useUser } from '../../hooks/useUser.ts';
@@ -10,14 +10,11 @@ import GridSkeleton from '../skeletons/GridSkeleton.tsx';
 import { Check, Star, PartyPopper, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const MotionButton = motion.button as any;
-const MotionDiv = motion.div as any;
-
 const EventCard: React.FC<{ collegeEvent: CollegeEvent, onRsvp: (id: string, status: 'going' | 'interested') => void }> = React.memo(({ collegeEvent, onRsvp }) => {
     const rsvpStatus = collegeEvent.rsvpStatus || 'none';
   
     return (
-    <MotionDiv 
+    <motion.div 
         whileHover={{ y: -5, boxShadow: "0px 10px 30px rgba(139, 92, 246, 0.1)" }}
         className="bg-zinc-900/60 backdrop-blur-lg border border-zinc-800 rounded-2xl overflow-hidden"
     >
@@ -28,27 +25,27 @@ const EventCard: React.FC<{ collegeEvent: CollegeEvent, onRsvp: (id: string, sta
         <div className="flex justify-between items-center mt-4 pt-4 border-t border-zinc-800">
           <p className="text-sm text-zinc-300">Are you attending?</p>
           <div className="flex items-center gap-2">
-            <MotionButton whileTap={{ scale: 0.95 }} onClick={() => onRsvp(collegeEvent.id, 'interested')} className={`px-3 py-1.5 text-sm rounded-full border transition-colors flex items-center gap-1 ${rsvpStatus === 'interested' ? 'bg-blue-500/20 text-blue-300 border-blue-500/50' : 'bg-zinc-800 border-transparent hover:bg-zinc-700'}`}>
+            <motion.button whileTap={{ scale: 0.95 }} onClick={() => onRsvp(collegeEvent.id, 'interested')} className={`px-3 py-1.5 text-sm rounded-full border transition-colors flex items-center gap-1 ${rsvpStatus === 'interested' ? 'bg-blue-500/20 text-blue-300 border-blue-500/50' : 'bg-zinc-800 border-transparent hover:bg-zinc-700'}`}>
               <Star size={14} /> Interested
-            </MotionButton>
-            <MotionButton whileTap={{ scale: 0.95 }} onClick={() => onRsvp(collegeEvent.id, 'going')} className={`px-3 py-1.5 text-sm rounded-full border transition-colors flex items-center gap-1 ${rsvpStatus === 'going' ? 'bg-green-500/20 text-green-300 border-green-500/50' : 'bg-zinc-800 border-transparent hover:bg-zinc-700'}`}>
+            </motion.button>
+            <motion.button whileTap={{ scale: 0.95 }} onClick={() => onRsvp(collegeEvent.id, 'going')} className={`px-3 py-1.5 text-sm rounded-full border transition-colors flex items-center gap-1 ${rsvpStatus === 'going' ? 'bg-green-500/20 text-green-300 border-green-500/50' : 'bg-zinc-800 border-transparent hover:bg-zinc-700'}`}>
               <Check size={14} /> Going
-            </MotionButton>
+            </motion.button>
           </div>
         </div>
       </div>
-    </MotionDiv>
+    </motion.div>
   );
 });
 
 
 const EventsScreen: React.FC = () => {
-  const [events, setEvents] = useState<CollegeEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [events, setEvents] = React.useState<CollegeEvent[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const { user } = useUser();
 
-  const loadEvents = useCallback(async () => {
+  const loadEvents = React.useCallback(async () => {
     if (!user) return;
     setLoading(true);
     setError(null);
@@ -62,7 +59,7 @@ const EventsScreen: React.FC = () => {
     }
   }, [user]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     loadEvents();
   }, [loadEvents]);
 

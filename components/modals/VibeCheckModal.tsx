@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import * as React from 'react';
 import { BlindDate, VibeCheck } from '../../types.ts';
 import { submitVibeCheck } from '../../services/api.ts';
 import { useNotification } from '../../hooks/useNotification.ts';
@@ -7,9 +8,6 @@ import { PREMIUM_GRADIENT } from '../../constants.tsx';
 import LoadingSpinner from '../LoadingSpinner.tsx';
 import { X, ThumbsUp, ThumbsDown, CheckCircle, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const MotionDiv = motion.div as any;
-const MotionButton = motion.button as any;
 
 interface VibeCheckModalProps {
     date: BlindDate;
@@ -20,10 +18,10 @@ const positiveTags = ['Funny', 'Great chat', 'Good Listener', 'Confident', 'Punc
 const constructiveTags = ['A bit shy', 'Not very talkative', 'Seemed distracted', 'Arrogant', 'Late', 'Different vibe'];
 
 const VibeCheckModal: React.FC<VibeCheckModalProps> = ({ date, onClose }) => {
-    const [step, setStep] = useState<'rating' | 'tags' | 'submitted'>('rating');
-    const [rating, setRating] = useState<'good' | 'bad' | null>(null);
-    const [selectedTags, setSelectedTags] = useState<string[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [step, setStep] = React.useState<'rating' | 'tags' | 'submitted'>('rating');
+    const [rating, setRating] = React.useState<'good' | 'bad' | null>(null);
+    const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
+    const [loading, setLoading] = React.useState(false);
     const { showNotification } = useNotification();
     const { user } = useUser();
 
@@ -59,24 +57,24 @@ const VibeCheckModal: React.FC<VibeCheckModalProps> = ({ date, onClose }) => {
         switch (step) {
             case 'rating':
                 return (
-                    <MotionDiv key="rating" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                    <motion.div key="rating" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                          <h2 className="text-2xl font-bold text-center">VibeCheck</h2>
                         <p className="text-zinc-400 mt-1 text-center">How was your date with {date.otherUser.name}?</p>
                         <div className="flex gap-4 mt-8">
-                            <MotionButton whileHover={{scale: 1.05}} whileTap={{ scale: 0.95 }} onClick={() => handleRatingSelect('good')} className="flex-1 flex flex-col items-center justify-center gap-2 p-6 bg-zinc-800 rounded-2xl border-2 border-transparent hover:border-green-500 transition-colors">
+                            <motion.button whileHover={{scale: 1.05}} whileTap={{ scale: 0.95 }} onClick={() => handleRatingSelect('good')} className="flex-1 flex flex-col items-center justify-center gap-2 p-6 bg-zinc-800 rounded-2xl border-2 border-transparent hover:border-green-500 transition-colors">
                                 <ThumbsUp size={40} className="text-green-400"/>
                                 <span className="text-xl font-semibold">Good Vibe</span>
-                            </MotionButton>
-                             <MotionButton whileHover={{scale: 1.05}} whileTap={{ scale: 0.95 }} onClick={() => handleRatingSelect('bad')} className="flex-1 flex flex-col items-center justify-center gap-2 p-6 bg-zinc-800 rounded-2xl border-2 border-transparent hover:border-red-500 transition-colors">
+                            </motion.button>
+                             <motion.button whileHover={{scale: 1.05}} whileTap={{ scale: 0.95 }} onClick={() => handleRatingSelect('bad')} className="flex-1 flex flex-col items-center justify-center gap-2 p-6 bg-zinc-800 rounded-2xl border-2 border-transparent hover:border-red-500 transition-colors">
                                 <ThumbsDown size={40} className="text-red-400"/>
                                  <span className="text-xl font-semibold">Bad Vibe</span>
-                            </MotionButton>
+                            </motion.button>
                         </div>
-                    </MotionDiv>
+                    </motion.div>
                 );
             case 'tags':
                  return (
-                    <MotionDiv key="tags" initial={{ x: 300, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -300, opacity: 0 }}>
+                    <motion.div key="tags" initial={{ x: 300, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -300, opacity: 0 }}>
                         <div className="flex items-center gap-2 mb-4">
                             <button onClick={() => setStep('rating')} className="p-1 text-zinc-400 hover:text-white"><ChevronLeft /></button>
                             <h2 className="text-2xl font-bold">Anything to add?</h2>
@@ -91,37 +89,37 @@ const VibeCheckModal: React.FC<VibeCheckModalProps> = ({ date, onClose }) => {
                                 >{tag}</button>
                             ))}
                         </div>
-                        <MotionButton
+                        <motion.button
                             whileTap={{ scale: 0.95 }}
                             onClick={handleSubmit}
                             disabled={loading}
                             className={`w-full mt-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r ${PREMIUM_GRADIENT} hover:opacity-90 transition-opacity disabled:opacity-50`}
                         >
                             {loading ? <LoadingSpinner/> : 'Submit Feedback'}
-                        </MotionButton>
-                    </MotionDiv>
+                        </motion.button>
+                    </motion.div>
                 );
             case 'submitted':
                 return (
-                     <MotionDiv key="submitted" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
+                     <motion.div key="submitted" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
                         <CheckCircle size={56} className="mx-auto text-green-400"/>
                         <h2 className="text-2xl font-bold mt-4">Feedback Sent!</h2>
                         <p className="text-zinc-400 mt-2">Thanks for sharing. If you both had a good time, we'll let you know and create a match for you to chat!</p>
-                        <MotionButton
+                        <motion.button
                             whileTap={{ scale: 0.95 }}
                             onClick={onClose}
                             className={`w-full mt-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r ${PREMIUM_GRADIENT}`}
                         >
                             Done
-                        </MotionButton>
-                     </MotionDiv>
+                        </motion.button>
+                     </motion.div>
                 );
         }
     };
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <MotionDiv
+            <motion.div
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -131,7 +129,7 @@ const VibeCheckModal: React.FC<VibeCheckModalProps> = ({ date, onClose }) => {
                 <AnimatePresence mode="wait">
                     {renderContent()}
                 </AnimatePresence>
-            </MotionDiv>
+            </motion.div>
         </div>
     );
 };

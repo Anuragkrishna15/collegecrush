@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useEffect, useCallback, Suspense } from 'react';
+import * as React from 'react';
 import { Toaster } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -34,25 +34,25 @@ import NotificationsScreen from './components/screens/NotificationsScreen.tsx';
 
 
 const App: React.FC = () => {
-  const [session, setSession] = useState<any | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [boostEndTime, setBoostEndTime] = useState<number | undefined>();
-  const [loading, setLoading] = useState(true);
-  const [profileError, setProfileError] = useState<string | null>(null);
-  const [activeScreen, setActiveScreenState] = useState<Screen>(Screen.Swipe);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [session, setSession] = React.useState<any | null>(null);
+  const [user, setUser] = React.useState<User | null>(null);
+  const [boostEndTime, setBoostEndTime] = React.useState<number | undefined>();
+  const [loading, setLoading] = React.useState(true);
+  const [profileError, setProfileError] = React.useState<string | null>(null);
+  const [activeScreen, setActiveScreenState] = React.useState<Screen>(Screen.Swipe);
+  const [unreadCount, setUnreadCount] = React.useState(0);
 
   // Modal States
-  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
-  const [isBookingDate, setIsBookingDate] = useState(false);
-  const [vibeCheckDate, setVibeCheckDate] = useState<BlindDate | null>(null);
+  const [selectedProfile, setSelectedProfile] = React.useState<Profile | null>(null);
+  const [isBookingDate, setIsBookingDate] = React.useState(false);
+  const [vibeCheckDate, setVibeCheckDate] = React.useState<BlindDate | null>(null);
   
   // Lifted state for chat navigation
-  const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
+  const [activeConversation, setActiveConversation] = React.useState<Conversation | null>(null);
 
-  const notificationContextValue = useMemo(() => ({ showNotification: notificationHandler }), []);
+  const notificationContextValue = React.useMemo(() => ({ showNotification: notificationHandler }), []);
 
-  const logout = useCallback(async () => {
+  const logout = React.useCallback(async () => {
     setLoading(true);
     await supabase.auth.signOut();
     setUser(null);
@@ -65,7 +65,7 @@ const App: React.FC = () => {
     setLoading(false);
   }, []);
 
-  const refetchUser = useCallback(async () => {
+  const refetchUser = React.useCallback(async () => {
     if (!session?.user?.id) return;
     try {
       setLoading(true);
@@ -90,7 +90,7 @@ const App: React.FC = () => {
     setActiveScreenState(screen);
   };
   
-  useEffect(() => {
+  React.useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
@@ -107,7 +107,7 @@ const App: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (session?.user?.id) {
       refetchUser();
       
@@ -137,14 +137,14 @@ const App: React.FC = () => {
     }
   }, [session, refetchUser]);
   
-  const contextValue = useMemo(() => ({ user, loading, logout, refetchUser, boostEndTime }), [user, loading, logout, refetchUser, boostEndTime]);
+  const contextValue = React.useMemo(() => ({ user, loading, logout, refetchUser, boostEndTime }), [user, loading, logout, refetchUser, boostEndTime]);
 
   const handleGoToChat = (conversation?: Conversation) => {
     setActiveConversation(conversation || null);
     setActiveScreen(Screen.Chat);
   };
   
-  const handleProfileUpdate = useCallback(async () => {
+  const handleProfileUpdate = React.useCallback(async () => {
       await refetchUser();
       setActiveScreen(Screen.Profile);
   }, [refetchUser]);
@@ -264,11 +264,6 @@ const App: React.FC = () => {
     if (!user) {
         return <OnboardingScreen onProfileCreated={refetchUser} />;
     }
-    
-    // HACK: Cast motion components to `any` to bypass framer-motion/react-19 type issues.
-    // This is a temporary workaround for a known issue between these libraries. It can be removed once
-    // framer-motion releases an official version with full React 19 compatibility.
-    const MotionDiv = motion.div as any;
 
     return (
         <div className="md:flex h-screen w-full bg-transparent font-sans">
@@ -277,7 +272,7 @@ const App: React.FC = () => {
              <TopBar activeScreen={activeScreen} setActiveScreen={setActiveScreen} unreadCount={unreadCount} />
              <div className="flex-1 overflow-y-auto pb-24 md:pb-0">
                 <AnimatePresence mode="wait">
-                    <MotionDiv
+                    <motion.div
                         key={activeScreen}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -285,14 +280,8 @@ const App: React.FC = () => {
                         transition={{ duration: 0.2 }}
                         className="h-full w-full"
                     >
-                        <Suspense fallback={
-                           <div className="h-full w-full flex items-center justify-center">
-                                <LoadingSpinner />
-                           </div>
-                        }>
-                            {renderScreen()}
-                        </Suspense>
-                    </MotionDiv>
+                        {renderScreen()}
+                    </motion.div>
                 </AnimatePresence>
              </div>
           </main>

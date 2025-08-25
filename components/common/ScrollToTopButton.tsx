@@ -1,11 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+
+import * as React from 'react';
 import { ChevronUp } from 'lucide-react';
 
 const ScrollToTopButton: React.FC = () => {
-    const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible] = React.useState(false);
 
-    useEffect(() => {
+    React.useEffect(() => {
         const toggleVisibility = () => {
             const scrollableElement = document.querySelector('main');
             if (scrollableElement && scrollableElement.scrollTop > 300) {

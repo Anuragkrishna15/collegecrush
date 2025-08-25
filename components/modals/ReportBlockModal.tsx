@@ -1,13 +1,12 @@
 
-import React, { useState } from 'react';
+
+import * as React from 'react';
 import { Profile } from '../../types.ts';
 import { useNotification } from '../../hooks/useNotification.ts';
 import { reportOrBlock } from '../../services/api.ts';
 import LoadingSpinner from '../LoadingSpinner.tsx';
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
-
-const MotionDiv = motion.div as any;
 
 interface ReportBlockModalProps {
     reportingUser: Profile;
@@ -25,10 +24,10 @@ const reportReasons = [
 ];
 
 function ReportBlockModal({ reportingUser, reportedProfile, onClose, onSuccess }: ReportBlockModalProps) {
-    const [selectedReason, setSelectedReason] = useState("");
-    const [otherReason, setOtherReason] = useState("");
-    const [actionType, setActionType] = useState<'report' | 'block'>('report');
-    const [loading, setLoading] = useState(false);
+    const [selectedReason, setSelectedReason] = React.useState("");
+    const [otherReason, setOtherReason] = React.useState("");
+    const [actionType, setActionType] = React.useState<'report' | 'block'>('report');
+    const [loading, setLoading] = React.useState(false);
     const { showNotification } = useNotification();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -57,12 +56,12 @@ function ReportBlockModal({ reportingUser, reportedProfile, onClose, onSuccess }
     };
 
     return (
-        <MotionDiv
+        <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
         >
-            <MotionDiv
+            <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="relative bg-zinc-950/60 backdrop-blur-xl rounded-3xl w-full max-w-sm p-8 border border-zinc-700 shadow-lg"
@@ -114,8 +113,8 @@ function ReportBlockModal({ reportingUser, reportedProfile, onClose, onSuccess }
                         {loading ? <LoadingSpinner /> : `Submit ${actionType.charAt(0).toUpperCase() + actionType.slice(1)}`}
                     </button>
                 </form>
-            </MotionDiv>
-        </MotionDiv>
+            </motion.div>
+        </motion.div>
     );
 };
 

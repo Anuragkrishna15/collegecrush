@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+
+import * as React from 'react';
 import { fetchMyDates, acceptProposal, updateUserLocation, fetchNearbyProposals, cancelMyProposal, fetchMyProposals } from '../../services/api.ts';
 import { BlindDate, MembershipType, Screen, MyBlindDateProposal, BlindDateProposal } from '../../types.ts';
 import { PREMIUM_GRADIENT } from '../../constants.tsx';
@@ -11,9 +12,6 @@ import { CalendarX2, Clock, MapPin, Lock, CheckCircle, Hourglass, Inbox, Compass
 import { motion } from 'framer-motion';
 import { getOptimizedUrl } from '../../utils/date.ts';
 import BlurredProfileCard from '../common/BlurredProfileCard.tsx';
-
-const MotionButton = motion.button as any;
-const MotionDiv = motion.div as any;
 
 const ProposalCard: React.FC<{ proposal: BlindDateProposal, onAccept: (id: string) => void, isProcessing: boolean }> = ({ proposal, onAccept, isProcessing }) => (
     <div className="bg-zinc-900/70 backdrop-blur-lg border border-zinc-800 rounded-2xl p-4 flex flex-col gap-3">
@@ -30,7 +28,7 @@ const ProposalCard: React.FC<{ proposal: BlindDateProposal, onAccept: (id: strin
             <p className="flex items-center gap-2"><MapPin size={14} className="text-purple-400"/> {proposal.cafe}</p>
             <p className="flex items-center gap-2"><Clock size={14} className="text-purple-400"/> {new Date(proposal.dateTime).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</p>
         </div>
-        <MotionButton
+        <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => onAccept(proposal.id)}
             disabled={isProcessing}
@@ -38,7 +36,7 @@ const ProposalCard: React.FC<{ proposal: BlindDateProposal, onAccept: (id: strin
         >
             <div className="absolute inset-0 animate-shimmer"></div>
             {isProcessing ? 'Accepting...' : 'Accept & Reveal'}
-        </MotionButton>
+        </motion.button>
     </div>
 );
 
@@ -49,7 +47,7 @@ const MyProposalCard: React.FC<{ proposal: MyBlindDateProposal, onCancel: (id: s
             <p className="flex items-center gap-2 text-zinc-400"><MapPin size={14} /> {proposal.cafe}</p>
             <p className="flex items-center gap-2 text-zinc-400"><Clock size={14} /> {new Date(proposal.dateTime).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</p>
         </div>
-        <MotionButton
+        <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => onCancel(proposal.id)}
             disabled={isProcessing}
@@ -57,7 +55,7 @@ const MyProposalCard: React.FC<{ proposal: MyBlindDateProposal, onCancel: (id: s
             aria-label="Cancel proposal"
         >
             {isProcessing ? <LoadingSpinner /> : <Trash2 size={18} />}
-        </MotionButton>
+        </motion.button>
     </div>
 );
 
@@ -81,9 +79,9 @@ const MyDateCard: React.FC<{ date: BlindDate; onVibeCheck: (date: BlindDate) => 
         }
         if (isPast && date.status === 'accepted') {
             return (
-                <MotionButton whileTap={{ scale: 0.95 }} onClick={() => onVibeCheck(date)} className={`w-full text-sm py-2.5 rounded-lg bg-gradient-to-r ${PREMIUM_GRADIENT} text-white font-semibold`}>
+                <motion.button whileTap={{ scale: 0.95 }} onClick={() => onVibeCheck(date)} className={`w-full text-sm py-2.5 rounded-lg bg-gradient-to-r ${PREMIUM_GRADIENT} text-white font-semibold`}>
                     Submit VibeCheck
-                </MotionButton>
+                </motion.button>
             );
         }
         return null;
@@ -121,19 +119,19 @@ interface DatesScreenProps {
 }
 
 const DatesScreen: React.FC<DatesScreenProps> = ({ onBookDate, onVibeCheck, setActiveScreen }) => {
-    const [myDates, setMyDates] = useState<BlindDate[]>([]);
-    const [myProposals, setMyProposals] = useState<MyBlindDateProposal[]>([]);
-    const [nearbyProposals, setNearbyProposals] = useState<BlindDateProposal[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [processingId, setProcessingId] = useState<string | null>(null);
+    const [myDates, setMyDates] = React.useState<BlindDate[]>([]);
+    const [myProposals, setMyProposals] = React.useState<MyBlindDateProposal[]>([]);
+    const [nearbyProposals, setNearbyProposals] = React.useState<BlindDateProposal[]>([]);
+    const [loading, setLoading] = React.useState(true);
+    const [processingId, setProcessingId] = React.useState<string | null>(null);
     const { user, refetchUser } = useUser();
     const { showNotification } = useNotification();
     
-    const [locationStatus, setLocationStatus] = useState<'prompt' | 'loading' | 'granted' | 'denied'>('prompt');
+    const [locationStatus, setLocationStatus] = React.useState<'prompt' | 'loading' | 'granted' | 'denied'>('prompt');
 
     const canCreateDate = user?.membership === MembershipType.Premium;
 
-    const loadAllData = useCallback(async () => {
+    const loadAllData = React.useCallback(async () => {
         if (!user?.id) return;
         setLoading(true);
         try {
@@ -152,7 +150,7 @@ const DatesScreen: React.FC<DatesScreenProps> = ({ onBookDate, onVibeCheck, setA
         }
     }, [user, showNotification]);
 
-    const requestLocation = useCallback(() => {
+    const requestLocation = React.useCallback(() => {
         if (!("geolocation" in navigator)) {
             setLocationStatus('denied');
             showNotification("Geolocation is not supported by your browser.", "error");
@@ -178,7 +176,7 @@ const DatesScreen: React.FC<DatesScreenProps> = ({ onBookDate, onVibeCheck, setA
         );
     }, [showNotification, refetchUser]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (user?.latitude && user?.longitude) {
             setLocationStatus('granted');
         } else if (user) {
@@ -187,7 +185,7 @@ const DatesScreen: React.FC<DatesScreenProps> = ({ onBookDate, onVibeCheck, setA
         }
     }, [user]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (locationStatus === 'granted') {
             loadAllData();
         }
@@ -228,12 +226,12 @@ const DatesScreen: React.FC<DatesScreenProps> = ({ onBookDate, onVibeCheck, setA
     // UI Render states
     if (user?.membership !== MembershipType.Premium) {
         return (
-            <MotionDiv initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="h-full flex flex-col items-center justify-center text-center p-8">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="h-full flex flex-col items-center justify-center text-center p-8">
                 <Lock className="w-16 h-16 text-yellow-400 mb-6" />
                 <h2 className={`text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r ${PREMIUM_GRADIENT}`}>Unlock Blind Dates</h2>
                 <p className="text-zinc-400 mt-3 max-w-sm">Upgrade to Premium to propose and accept exciting blind dates with students near you.</p>
-                <MotionButton whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.05, y: -5 }} onClick={() => setActiveScreen(Screen.Profile)} className={`mt-8 w-full max-w-xs py-3 rounded-xl font-semibold text-white bg-gradient-to-r ${PREMIUM_GRADIENT} shadow-lg shadow-pink-500/30`}>Upgrade to Premium</MotionButton>
-            </MotionDiv>
+                <motion.button whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.05, y: -5 }} onClick={() => setActiveScreen(Screen.Profile)} className={`mt-8 w-full max-w-xs py-3 rounded-xl font-semibold text-white bg-gradient-to-r ${PREMIUM_GRADIENT} shadow-lg shadow-pink-500/30`}>Upgrade to Premium</motion.button>
+            </motion.div>
         );
     }
     
@@ -243,9 +241,9 @@ const DatesScreen: React.FC<DatesScreenProps> = ({ onBookDate, onVibeCheck, setA
                 <Compass className="w-16 h-16 text-purple-400 mb-6" />
                 <h2 className="text-2xl font-bold">Location is Key for Blind Dates</h2>
                 <p className="text-zinc-400 mt-3 max-w-sm">We need your location to find date proposals from other students near you. Your location is kept private and safe.</p>
-                <MotionButton onClick={requestLocation} disabled={locationStatus === 'loading'} className={`mt-8 w-full max-w-xs py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-500 to-indigo-500`}>
+                <motion.button onClick={requestLocation} disabled={locationStatus === 'loading'} className={`mt-8 w-full max-w-xs py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-500 to-indigo-500`}>
                     {locationStatus === 'loading' ? <LoadingSpinner /> : 'Enable Location'}
-                </MotionButton>
+                </motion.button>
              </div>
         )
     }
@@ -291,9 +289,9 @@ const DatesScreen: React.FC<DatesScreenProps> = ({ onBookDate, onVibeCheck, setA
             </div>
             <div className="fixed bottom-24 md:bottom-8 inset-x-0 z-10 px-4 pointer-events-none">
                 <div className="max-w-md mx-auto pointer-events-auto">
-                    <MotionButton whileHover={{ scale: 1.05, y: -5 }} whileTap={{ scale: 0.95 }} onClick={onBookDate} disabled={!canCreateDate} className={`w-full py-4 rounded-xl text-white font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-pink-500/20 bg-gradient-to-r ${PREMIUM_GRADIENT}`}>
+                    <motion.button whileHover={{ scale: 1.05, y: -5 }} whileTap={{ scale: 0.95 }} onClick={onBookDate} disabled={!canCreateDate} className={`w-full py-4 rounded-xl text-white font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-pink-500/20 bg-gradient-to-r ${PREMIUM_GRADIENT}`}>
                         <Ticket /> Propose a New Date
-                    </MotionButton>
+                    </motion.button>
                 </div>
             </div>
             <ScrollToTopButton />

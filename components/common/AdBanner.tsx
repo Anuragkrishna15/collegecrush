@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+
+import * as React from 'react';
 import { PREMIUM_GRADIENT } from '../../constants.tsx';
 import { Screen } from '../../types.ts';
 import { X } from 'lucide-react';
@@ -9,7 +10,7 @@ interface AdBannerProps {
 }
 
 const AdBanner: React.FC<AdBannerProps> = ({ setActiveScreen }) => {
-    const [visible, setVisible] = useState(true);
+    const [visible, setVisible] = React.useState(true);
 
     if (!visible) {
         return null;

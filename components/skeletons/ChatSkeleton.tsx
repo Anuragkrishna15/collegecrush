@@ -1,5 +1,6 @@
 
-import React from 'react';
+
+import * as React from 'react';
 
 const ChatListItemSkeleton: React.FC = () => (
   <div className="flex items-center gap-4 p-4 animate-pulse">

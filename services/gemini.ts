@@ -1,20 +1,37 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { BasicProfile, Message } from '../types.ts';
 
-// As per instructions, API_KEY is assumed to be in the environment.
-const apiKey = process.env.API_KEY;
-
-if (!apiKey) {
-    throw new Error("Missing Gemini API Key. Please set the API_KEY environment variable. This is a critical error for AI features to function.");
+// Initialize the Gemini AI client.
+// This will be null if the API key is not available, preventing the app from crashing.
+let ai: GoogleGenAI | null = null;
+try {
+  // The execution environment is expected to provide process.env.API_KEY.
+  const apiKey = process.env.API_KEY;
+  if (apiKey) {
+    ai = new GoogleGenAI({ apiKey });
+  } else {
+    // This warning is for developers. The app will continue to run.
+    console.warn("Gemini API Key is missing. AI-powered features will be disabled.");
+  }
+} catch (error) {
+  console.error("Could not initialize Gemini AI. AI-powered features will be disabled.", error);
 }
 
-const ai = new GoogleGenAI({ apiKey });
+// A helper function to ensure the AI client is available before use.
+const getAiClient = (): GoogleGenAI => {
+    if (!ai) {
+        throw new Error("AI features are currently unavailable. Please ensure the API key is configured correctly.");
+    }
+    return ai;
+}
+
 
 export const findNearbyCafes = async (latitude: number, longitude: number): Promise<string[]> => {
     try {
+        const aiClient = getAiClient();
         const prompt = `Find 5 popular, safe, and well-rated cafes or coffee shops suitable for a first date near latitude ${latitude} and longitude ${longitude}. Return a JSON object with a key 'cafes' which is an array of 5 strings, where each string is just the cafe name.`;
 
-        const response = await ai.models.generateContent({
+        const response = await aiClient.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
             config: {
@@ -43,6 +60,9 @@ export const findNearbyCafes = async (latitude: number, longitude: number): Prom
         throw new Error("Could not find cafes in the expected format.");
     } catch (error) {
         console.error("Error finding nearby cafes:", error);
+        if (error instanceof Error && error.message.startsWith("AI features are currently unavailable")) {
+             throw error;
+        }
         throw new Error("Couldn't find cafes near you at the moment. Please try again.");
     }
 };
@@ -50,6 +70,7 @@ export const findNearbyCafes = async (latitude: number, longitude: number): Prom
 
 export const generateIcebreakers = async (profile: BasicProfile): Promise<string[]> => {
     try {
+        const aiClient = getAiClient();
         const promptsContext = (profile.prompts && profile.prompts.length > 0)
             ? profile.prompts.map(p => `Q: ${p.question}\nA: ${p.answer}`).join('\n\n')
             : 'No prompts provided.';
@@ -66,7 +87,7 @@ export const generateIcebreakers = async (profile: BasicProfile): Promise<string
         
         Return the response as a JSON object with a single key "icebreakers" which is an array of 3 strings.`;
 
-        const response = await ai.models.generateContent({
+        const response = await aiClient.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
             config: {
@@ -99,6 +120,9 @@ export const generateIcebreakers = async (profile: BasicProfile): Promise<string
 
     } catch (error) {
         console.error("Error generating icebreakers:", error);
+        if (error instanceof Error && error.message.startsWith("AI features are currently unavailable")) {
+             throw error;
+        }
         throw new Error("Could not generate icebreakers. Let's try a classic 'Hey!' for now?");
     }
 };
@@ -106,6 +130,7 @@ export const generateIcebreakers = async (profile: BasicProfile): Promise<string
 
 export const rateConversation = async (messages: Message[], currentUserId: string): Promise<{score: number, feedback: string}> => {
     try {
+        const aiClient = getAiClient();
         const formattedMessages = messages.map(msg => {
             const author = msg.senderId === currentUserId ? 'Me' : 'Them';
             return `${author}: ${msg.text}`;
@@ -120,7 +145,7 @@ export const rateConversation = async (messages: Message[], currentUserId: strin
 
         Return the response as a JSON object with "score" and "feedback" keys.`;
 
-        const response = await ai.models.generateContent({
+        const response = await aiClient.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
             config: {
@@ -153,6 +178,9 @@ export const rateConversation = async (messages: Message[], currentUserId: strin
 
     } catch (error) {
         console.error("Error rating conversation:", error);
+        if (error instanceof Error && error.message.startsWith("AI features are currently unavailable")) {
+             throw error;
+        }
         throw new Error("The Rizz Meter is sleeping right now. Try again in a bit!");
     }
 };

@@ -1,5 +1,5 @@
 
-import { createContext, useContext } from 'react';
+import * as React from 'react';
 import { User } from '../types.ts';
 
 interface UserContextType {
@@ -10,10 +10,10 @@ interface UserContextType {
   boostEndTime?: number;
 }
 
-export const UserContext = createContext<UserContextType | undefined>(undefined);
+export const UserContext = React.createContext<UserContextType | undefined>(undefined);
 
 export const useUser = (): UserContextType => {
-  const context = useContext(UserContext);
+  const context = React.useContext(UserContext);
   if (!context) {
     throw new Error('useUser must be used within a UserProvider');
   }

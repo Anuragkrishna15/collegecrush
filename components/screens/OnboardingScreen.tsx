@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import * as React from 'react';
 import { createProfile } from '../../services/api.ts';
 import { ProfileOnboardingData, Prompt } from '../../types.ts';
 import LoadingSpinner from '../LoadingSpinner.tsx';
@@ -6,9 +7,6 @@ import { PREMIUM_GRADIENT } from '../../constants.tsx';
 import { supabase } from '../../services/supabase.ts';
 import { Camera, Plus, Edit3 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const MotionButton = motion.button as any;
-const MotionDiv = motion.div as any;
 
 interface OnboardingScreenProps {
   onProfileCreated: () => void;
@@ -27,21 +25,21 @@ const PROMPT_QUESTIONS = [
 ];
 
 const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onProfileCreated }) => {
-  const [step, setStep] = useState(1);
-  const [sessionUser, setSessionUser] = useState<any>(null);
-  const [formData, setFormData] = useState<Omit<ProfileOnboardingData, 'tags' | 'prompts'>>({
+  const [step, setStep] = React.useState(1);
+  const [sessionUser, setSessionUser] = React.useState<any>(null);
+  const [formData, setFormData] = React.useState<Omit<ProfileOnboardingData, 'tags' | 'prompts'>>({
     name: '',
     dob: '',
     gender: 'Male',
     bio: '',
     course: ''
   });
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [prompts, setPrompts] = useState<(Prompt | null)[]>([null, null, null]);
-  const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
-  const [profilePicPreview, setProfilePicPreview] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
+  const [prompts, setPrompts] = React.useState<(Prompt | null)[]>([null, null, null]);
+  const [profilePicFile, setProfilePicFile] = React.useState<File | null>(null);
+  const [profilePicPreview, setProfilePicPreview] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -121,7 +119,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onProfileCreated })
   };
 
   const renderStep1 = () => (
-      <MotionDiv initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }}>
+      <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }}>
         <h1 className={`text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r ${PREMIUM_GRADIENT} text-center`}>Create Your Profile</h1>
         <p className="text-zinc-400 mt-2 text-center">Let's get you set up to start connecting.</p>
         <div className="mt-8 space-y-6">
@@ -181,17 +179,17 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onProfileCreated })
                 </div>
             </div>
              <div>
-                <MotionButton whileTap={{ scale: 0.95 }} type="button" onClick={handleNextStep}
+                <motion.button whileTap={{ scale: 0.95 }} type="button" onClick={handleNextStep}
                 className={`w-full mt-4 py-3 rounded-lg font-semibold text-white bg-gradient-to-r ${PREMIUM_GRADIENT} hover:opacity-90 transition-opacity`}>
                     Next
-                </MotionButton>
+                </motion.button>
             </div>
         </div>
-      </MotionDiv>
+      </motion.div>
   );
   
   const renderStep2 = () => (
-      <MotionDiv initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}>
+      <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}>
         <h1 className={`text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r ${PREMIUM_GRADIENT} text-center`}>Answer 3 Prompts</h1>
         <p className="text-zinc-400 mt-2 text-center">This helps others get to know you better.</p>
         <div className="mt-8 space-y-4">
@@ -205,16 +203,16 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onProfileCreated })
             ))}
         </div>
         <div className="flex gap-4 mt-6">
-            <MotionButton whileTap={{ scale: 0.95 }} type="button" onClick={() => setStep(1)}
+            <motion.button whileTap={{ scale: 0.95 }} type="button" onClick={() => setStep(1)}
                 className="flex-1 py-3 rounded-lg font-semibold text-white bg-zinc-700 hover:bg-zinc-600 transition-colors">
                 Back
-            </MotionButton>
-             <MotionButton whileTap={{ scale: 0.95 }} type="submit" disabled={loading}
+            </motion.button>
+             <motion.button whileTap={{ scale: 0.95 }} type="submit" disabled={loading}
               className={`flex-1 py-3 rounded-lg font-semibold text-white bg-gradient-to-r ${PREMIUM_GRADIENT} hover:opacity-90 transition-opacity disabled:opacity-50 flex justify-center items-center`}>
               {loading ? <LoadingSpinner /> : 'Create Profile'}
-            </MotionButton>
+            </motion.button>
         </div>
-      </MotionDiv>
+      </motion.div>
   );
 
   return (
@@ -232,7 +230,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onProfileCreated })
 };
 
 const PromptEditor: React.FC<{prompt: Prompt | null, onChange: (prompt: Prompt) => void, usedQuestions: string[]}> = ({ prompt, onChange, usedQuestions }) => {
-    const [isChoosing, setIsChoosing] = useState(false);
+    const [isChoosing, setIsChoosing] = React.useState(false);
     
     const handleQuestionSelect = (question: string) => {
         onChange({ question, answer: '' });

@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect, useCallback } from 'react';
+import * as React from 'react';
 import { fetchTrips, bookTrip } from '../../services/api.ts';
 import { Trip, MembershipType } from '../../types.ts';
 import { useUser } from '../../hooks/useUser.ts';
@@ -12,19 +12,16 @@ import { supabase } from '../../services/supabase.ts';
 import { Info, IndianRupee, Users, Lock, AlertTriangle, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const MotionDiv = motion.div as any;
-const MotionButton = motion.button as any;
-
 const TripCard: React.FC<{ trip: Trip; onBook: (id: string) => void; }> = React.memo(({ trip, onBook }) => {
   const { user } = useUser();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = React.useState(false);
   const isStrangerTrip = trip.type === 'Stranger';
   const canBook = user?.membership === MembershipType.Premium;
 
   const needsExpansion = trip.details && trip.details.length > 120;
 
   return (
-    <MotionDiv 
+    <motion.div 
         whileHover={{ y: -5, boxShadow: "0px 10px 30px rgba(236, 72, 153, 0.1)" }}
         className="bg-zinc-900/60 backdrop-blur-lg border border-zinc-800 rounded-2xl overflow-hidden flex flex-col shadow-lg"
     >
@@ -91,7 +88,7 @@ const TripCard: React.FC<{ trip: Trip; onBook: (id: string) => void; }> = React.
         </div>
         
         <div className="mt-auto pt-4">
-            <MotionButton 
+            <motion.button 
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onBook(trip.id)}
                 disabled={!canBook || trip.slots === 0}
@@ -99,22 +96,22 @@ const TripCard: React.FC<{ trip: Trip; onBook: (id: string) => void; }> = React.
             >
                 {!canBook && <Lock size={16} />}
                 {trip.slots === 0 ? 'Fully Booked' : canBook ? 'Book Your Spot' : 'Premium Membership Required'}
-            </MotionButton>
+            </motion.button>
         </div>
       </div>
-    </MotionDiv>
+    </motion.div>
   );
 });
 
 
 const TripsScreen: React.FC = () => {
-  const [trips, setTrips] = useState<Trip[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [trips, setTrips] = React.useState<Trip[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const { user } = useUser();
   const { showNotification } = useNotification();
 
-  const loadTrips = useCallback(async () => {
+  const loadTrips = React.useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -128,7 +125,7 @@ const TripsScreen: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     loadTrips();
 
     const channel = supabase.channel('trips-realtime-channel')

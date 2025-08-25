@@ -1,4 +1,5 @@
-import React from 'react';
+
+import * as React from 'react';
 
 const ProfileCardSkeleton: React.FC = () => (
     <div className="aspect-square bg-neutral-900 rounded-2xl animate-pulse"></div>

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import * as React from 'react';
 import { proposeBlindDate } from '../../services/api.ts';
 import { findNearbyCafes } from '../../services/gemini.ts';
 import { useNotification } from '../../hooks/useNotification.ts';
@@ -9,9 +10,6 @@ import { X, MapPin, Calendar, Clock, Utensils, ChevronLeft, Sparkles } from 'luc
 import { BlindDate } from '../../types.ts';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const MotionDiv = motion.div as any;
-const MotionButton = motion.button as any;
-
 interface BookBlindDateModalProps {
     onClose: () => void;
     userLocation: { latitude: number; longitude: number; }
@@ -20,18 +18,18 @@ interface BookBlindDateModalProps {
 const mealTypes: BlindDate['meal'][] = ['Coffee & Snacks', 'Breakfast', 'Lunch', 'Dinner'];
 
 const BookBlindDateModal: React.FC<BookBlindDateModalProps> = ({ onClose, userLocation }) => {
-    const [step, setStep] = useState(1);
-    const [cafes, setCafes] = useState<string[]>([]);
-    const [loadingCafes, setLoadingCafes] = useState(true);
-    const [selectedCafe, setSelectedCafe] = useState('');
-    const [date, setDate] = useState('');
-    const [time, setTime] = useState('');
-    const [selectedMeal, setSelectedMeal] = useState<BlindDate['meal']>('Coffee & Snacks');
-    const [loading, setLoading] = useState(false);
+    const [step, setStep] = React.useState(1);
+    const [cafes, setCafes] = React.useState<string[]>([]);
+    const [loadingCafes, setLoadingCafes] = React.useState(true);
+    const [selectedCafe, setSelectedCafe] = React.useState('');
+    const [date, setDate] = React.useState('');
+    const [time, setTime] = React.useState('');
+    const [selectedMeal, setSelectedMeal] = React.useState<BlindDate['meal']>('Coffee & Snacks');
+    const [loading, setLoading] = React.useState(false);
     const { showNotification } = useNotification();
     const { user } = useUser();
     
-    useEffect(() => {
+    React.useEffect(() => {
         if (userLocation) {
             setLoadingCafes(true);
             findNearbyCafes(userLocation.latitude, userLocation.longitude)
@@ -76,7 +74,7 @@ const BookBlindDateModal: React.FC<BookBlindDateModalProps> = ({ onClose, userLo
     const today = new Date().toISOString().split('T')[0];
 
     const renderStep1 = () => (
-         <MotionDiv key="step1" initial={{ x: -300, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -300, opacity: 0 }}>
+         <motion.div key="step1" initial={{ x: -300, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -300, opacity: 0 }}>
             <h2 className="text-2xl font-bold flex items-center gap-2"><MapPin className="text-purple-400"/> Choose a Café</h2>
             <p className="text-zinc-400 mt-1">Here are some popular spots near you.</p>
             {loadingCafes ? (
@@ -90,11 +88,11 @@ const BookBlindDateModal: React.FC<BookBlindDateModalProps> = ({ onClose, userLo
                     ))}
                 </div>
             )}
-        </MotionDiv>
+        </motion.div>
     );
     
     const renderStep2 = () => (
-         <MotionDiv key="step2" initial={{ x: 300, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 300, opacity: 0 }}>
+         <motion.div key="step2" initial={{ x: 300, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 300, opacity: 0 }}>
             <div className="flex items-center gap-2">
                  <button onClick={() => setStep(1)} className="p-1 text-zinc-400 hover:text-white"><ChevronLeft /></button>
                  <h2 className="text-2xl font-bold">Set the Details</h2>
@@ -116,20 +114,20 @@ const BookBlindDateModal: React.FC<BookBlindDateModalProps> = ({ onClose, userLo
                     </select>
                  </div>
              </div>
-              <MotionButton
+              <motion.button
                     whileTap={{ scale: 0.95 }}
                     onClick={handleSubmit}
                     disabled={loading}
                     className={`w-full mt-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r ${PREMIUM_GRADIENT} hover:opacity-90 transition-opacity disabled:opacity-50 flex justify-center items-center`}
                 >
                     {loading ? <LoadingSpinner/> : 'Post Date Proposal'}
-                </MotionButton>
-        </MotionDiv>
+                </motion.button>
+        </motion.div>
     );
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <MotionDiv 
+            <motion.div 
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -142,7 +140,7 @@ const BookBlindDateModal: React.FC<BookBlindDateModalProps> = ({ onClose, userLo
                 <AnimatePresence mode="wait">
                     {step === 1 ? renderStep1() : renderStep2()}
                 </AnimatePresence>
-            </MotionDiv>
+            </motion.div>
         </div>
     );
 };

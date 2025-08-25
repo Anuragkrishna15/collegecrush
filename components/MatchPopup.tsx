@@ -1,15 +1,12 @@
 
-import React from 'react';
+
+import * as React from 'react';
 import { Profile } from '../types.ts';
 import { useUser } from '../hooks/useUser.ts';
 import { PREMIUM_GRADIENT } from '../constants.tsx';
 import LoadingSpinner from './LoadingSpinner.tsx';
 import { getOptimizedUrl } from '../utils/date.ts';
 import { motion } from 'framer-motion';
-
-const MotionDiv = motion.div as any;
-const MotionImg = motion.img as any;
-const MotionButton = motion.button as any;
 
 interface MatchPopupProps {
   matchedProfile: Profile;
@@ -35,7 +32,7 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ matchedProfile, onClose, onGoTo
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <MotionDiv 
+      <motion.div 
         initial={{ opacity: 0, scale: 0.8, y: 50 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: 'spring', damping: 15, stiffness: 200 }}
@@ -48,23 +45,23 @@ const MatchPopup: React.FC<MatchPopupProps> = ({ matchedProfile, onClose, onGoTo
           You and {matchedProfile.name} have liked each other.
         </p>
         <div className="flex justify-center items-center my-8 space-x-[-2rem]">
-          <MotionImg 
+          <motion.img 
             initial={{x: 50, rotate: 15}} animate={{x:0, rotate: -10}} transition={{type: 'spring', delay: 0.2}}
             src={getOptimizedUrl(currentUser.profilePics[0], { width: 128, height: 128 })} alt="You" loading="lazy" className="w-32 h-32 rounded-full object-cover border-4 border-pink-500 shadow-md" />
-          <MotionImg 
+          <motion.img 
             initial={{x: -50, rotate: -15}} animate={{x:0, rotate: 10}} transition={{type: 'spring', delay: 0.2}}
             src={getOptimizedUrl(matchedProfile.profilePics[0], { width: 128, height: 128 })} alt={matchedProfile.name} loading="lazy" className="w-32 h-32 rounded-full object-cover border-4 border-purple-500 shadow-md" />
         </div>
-        <MotionButton 
+        <motion.button 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleSendMessageClick} className={`w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r ${PREMIUM_GRADIENT} hover:opacity-90 transition-opacity shadow-lg shadow-pink-500/30`}>
           Send a Message
-        </MotionButton>
+        </motion.button>
         <button onClick={onClose} className="w-full mt-3 py-3 rounded-xl font-semibold text-zinc-300 bg-zinc-800 hover:bg-zinc-700 transition-colors">
           Keep Swiping
         </button>
-      </MotionDiv>
+      </motion.div>
     </div>
   );
 };

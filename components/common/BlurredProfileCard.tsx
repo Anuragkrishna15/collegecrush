@@ -1,5 +1,6 @@
 
-import React from 'react';
+
+import * as React from 'react';
 import { Profile, BasicProfile } from '../../types.ts';
 import { getOptimizedUrl } from '../../utils/date.ts';
 

@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
+
+import * as React from 'react';
 import { useUser } from '../../hooks/useUser.ts';
 import { MembershipType, Screen } from '../../types.ts';
 import { PREMIUM_GRADIENT } from '../../constants.tsx';
@@ -10,9 +11,6 @@ import LoadingSpinner from '../LoadingSpinner.tsx';
 import { Crown, Zap, Settings, LogOut, CheckCircle2, XCircle, ChevronRight, Edit } from 'lucide-react';
 import { getOptimizedUrl } from '../../utils/date.ts';
 import { motion } from 'framer-motion';
-
-const MotionButton = motion.button as any;
-const MotionDiv = motion.div as any;
 
 const PlanFeature: React.FC<{ children: React.ReactNode; included: boolean }> = ({ children, included }) => (
     <li className={`flex items-center gap-3 ${included ? 'text-zinc-200' : 'text-zinc-500 line-through'}`}>
@@ -45,7 +43,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, title, price, features, isCur
     }
 
     return (
-        <MotionDiv
+        <motion.div
             animate={{ scale: isFeatured ? 1.05 : 1, y: isFeatured ? -10 : 0 }}
             whileHover={{ scale: isFeatured ? 1.08 : 1.03 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
@@ -64,15 +62,15 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, title, price, features, isCur
             <ul className="space-y-3 mt-6 text-sm flex-1">
                 {features.map(f => <PlanFeature key={f.name} included={f.included}>{f.name}</PlanFeature>)}
             </ul>
-            <MotionButton
+            <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onSelect(plan)}
                 disabled={isCurrent || loading}
                 className={`w-full mt-8 py-3 rounded-xl font-semibold text-white transition-opacity disabled:opacity-70 ${isCurrent ? 'bg-zinc-700 cursor-default' : isFree ? 'bg-zinc-600 hover:bg-zinc-500' : `bg-gradient-to-r ${PREMIUM_GRADIENT} hover:opacity-90`}`}
             >
                 {buttonText}
-            </MotionButton>
-        </MotionDiv>
+            </motion.button>
+        </motion.div>
     );
 };
 
@@ -80,10 +78,10 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, title, price, features, isCur
 const ProfileScreen: React.FC<{setActiveScreen: (screen: Screen) => void}> = ({setActiveScreen}) => {
     const { user, logout, refetchUser, boostEndTime } = useUser();
     const { showNotification } = useNotification();
-    const [loading, setLoading] = useState(false);
-    const [boostTimeLeft, setBoostTimeLeft] = useState<number>(0);
+    const [loading, setLoading] = React.useState(false);
+    const [boostTimeLeft, setBoostTimeLeft] = React.useState<number>(0);
     
-    useEffect(() => {
+    React.useEffect(() => {
         if (boostEndTime) {
             const now = Date.now();
             const timeLeft = Math.floor((boostEndTime - now) / 1000);
@@ -91,7 +89,7 @@ const ProfileScreen: React.FC<{setActiveScreen: (screen: Screen) => void}> = ({s
         }
     }, [boostEndTime]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (boostTimeLeft > 0) {
             const timer = setTimeout(() => setBoostTimeLeft(prev => prev - 1), 1000);
             return () => clearTimeout(timer);
@@ -251,7 +249,7 @@ const ProfileScreen: React.FC<{setActiveScreen: (screen: Screen) => void}> = ({s
 
             { (user.membership === MembershipType.Trial || user.membership === MembershipType.Premium) && (
                 <div className="mt-8">
-                    <MotionButton 
+                    <motion.button 
                         whileTap={{ scale: 0.95 }}
                         onClick={handleBoost} 
                         disabled={boostTimeLeft > 0}
@@ -259,7 +257,7 @@ const ProfileScreen: React.FC<{setActiveScreen: (screen: Screen) => void}> = ({s
                     >
                         <Zap size={20} />
                         {boostTimeLeft > 0 ? `Boost Active (${formatTime(boostTimeLeft)})` : 'Boost Profile'}
-                    </MotionButton>
+                    </motion.button>
                     <p className="text-xs text-center mt-2 text-zinc-400">
                       {user.membership === 'Trial' ? "2 boosts included with your plan." : "Unlimited boosts with 24h cooldown for Premium."}
                     </p>

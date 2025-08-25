@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+
+import * as React from 'react';
 import { supabase } from '../../services/supabase.ts';
 import { PREMIUM_GRADIENT } from '../../constants.tsx';
 import LoadingSpinner from '../LoadingSpinner.tsx';
@@ -19,15 +20,12 @@ const ALLOWED_DOMAINS = [
     'abes.ac.in', 'niu.edu.in'
 ];
 
-const MotionDiv = motion.div as any;
-const MotionButton = motion.button as any;
-
 const AuthScreen: React.FC = () => {
-    const [email, setEmail] = useState('');
-    const [otp, setOtp] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [otpSent, setOtpSent] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [email, setEmail] = React.useState('');
+    const [otp, setOtp] = React.useState('');
+    const [loading, setLoading] = React.useState(false);
+    const [otpSent, setOtpSent] = React.useState(false);
+    const [error, setError] = React.useState<string | null>(null);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -83,7 +81,7 @@ const AuthScreen: React.FC = () => {
                 </h1>
                 <p className="text-zinc-400 mt-2">The exclusive network for college students.</p>
 
-                <MotionDiv 
+                <motion.div 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="mt-12 bg-zinc-950/70 backdrop-blur-lg border border-white/10 p-8 rounded-2xl"
@@ -100,14 +98,14 @@ const AuthScreen: React.FC = () => {
                                 className="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
                                 required
                             />
-                            <MotionButton
+                            <motion.button
                                 whileTap={{ scale: 0.95 }}
                                 type="submit"
                                 disabled={loading}
                                 className={`w-full mt-4 py-3 rounded-lg font-semibold text-white bg-gradient-to-r ${PREMIUM_GRADIENT} hover:opacity-90 transition-opacity disabled:opacity-50 flex justify-center items-center`}
                             >
                                 {loading ? <LoadingSpinner /> : 'Send Code'}
-                            </MotionButton>
+                            </motion.button>
                         </form>
                     ) : (
                         <form onSubmit={handleVerifyOtp}>
@@ -121,21 +119,21 @@ const AuthScreen: React.FC = () => {
                                 className="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 tracking-widest text-center"
                                 required
                             />
-                            <MotionButton
+                            <motion.button
                                 whileTap={{ scale: 0.95 }}
                                 type="submit"
                                 disabled={loading}
                                 className={`w-full mt-4 py-3 rounded-lg font-semibold text-white bg-gradient-to-r ${PREMIUM_GRADIENT} hover:opacity-90 transition-opacity disabled:opacity-50 flex justify-center items-center`}
                             >
                                 {loading ? <LoadingSpinner /> : 'Verify & Sign In'}
-                            </MotionButton>
+                            </motion.button>
                              <button type="button" onClick={() => { setOtpSent(false); setError(null); }} className="text-sm text-zinc-400 mt-4 hover:text-white">
                                 Use a different email
                             </button>
                         </form>
                     )}
                     {error && <p className="text-red-400 text-sm mt-4">{error}</p>}
-                </MotionDiv>
+                </motion.div>
             </div>
         </div>
     );

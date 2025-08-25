@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import * as React from 'react';
 import { Conversation, Message, Profile } from '../../../types.ts';
 import { useUser } from '../../../hooks/useUser.ts';
 import { useNotification } from '../../../hooks/useNotification.ts';
@@ -13,10 +13,6 @@ import { ArrowLeft, Send, Sparkles, X } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 import { formatMessageTime, formatDateSeparator, getOptimizedUrl } from '../../../utils/date.ts';
 import { IcebreakerGenerator } from '../../chat/IcebreakerGenerator.tsx';
-
-const MotionDiv = motion.div as any;
-const MotionButton = motion.button as any;
-const MotionP = motion.p as any;
 
 interface ChatDetailScreenProps {
   conversation: Conversation;
@@ -36,13 +32,13 @@ const RizzDisplay: React.FC<{ result: { score: number, feedback: string }, onClo
     const count = useMotionValue(0);
     const rounded = useTransform(count, latest => Math.round(latest));
 
-    useEffect(() => {
+    React.useEffect(() => {
         const animation = animate(count, result.score, { duration: 1.2, ease: "easeOut" });
         return animation.stop;
     }, [result.score, count]);
 
     return (
-        <MotionDiv
+        <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
@@ -53,11 +49,11 @@ const RizzDisplay: React.FC<{ result: { score: number, feedback: string }, onClo
                  <button onClick={onClose} className="absolute top-2 right-2 text-zinc-500 hover:text-white"><X size={16}/></button>
                 <div className="text-center">
                     <p className="text-sm text-zinc-400">Rizz Meter</p>
-                    <MotionP className={`text-6xl font-bold ${scoreColor}`}>{rounded}</MotionP>
+                    <motion.p className={`text-6xl font-bold ${scoreColor}`}>{rounded}</motion.p>
                 </div>
                 <p className="text-sm text-zinc-300 mt-2 text-center">{result.feedback}</p>
             </div>
-        </MotionDiv>
+        </motion.div>
     )
 };
 
@@ -81,7 +77,7 @@ const MessageBubble = React.memo(function MessageBubble({ message, isCurrentUser
         : 'rounded-t-2xl rounded-br-2xl message-bubble-received';
 
     return (
-        <MotionDiv 
+        <motion.div 
             layout
             initial={{ opacity: 0, y: 10, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -92,29 +88,29 @@ const MessageBubble = React.memo(function MessageBubble({ message, isCurrentUser
                 <p className="break-words whitespace-pre-wrap">{message.text}</p>
                  <p className={`text-xs mt-1 text-right ${isCurrentUser ? 'text-white/70' : 'text-zinc-500'}`}>{formatMessageTime(message.created_at)}</p>
             </div>
-        </MotionDiv>
+        </motion.div>
     );
 });
 
 function ChatDetailScreen({ conversation, onBack, onProfileClick }: ChatDetailScreenProps) {
   const { user } = useUser();
   const { showNotification } = useNotification();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [newMessage, setNewMessage] = useState('');
-  const [isSending, setIsSending] = useState(false);
-  const [isRizzing, setIsRizzing] = useState(false);
-  const [rizzResult, setRizzResult] = useState<{ score: number, feedback: string } | null>(null);
-  const [showRizzButton, setShowRizzButton] = useState(false);
-  const messagesEndRef = useRef<null | HTMLDivElement>(null);
-  const textareaRef = useRef<null | HTMLTextAreaElement>(null);
+  const [messages, setMessages] = React.useState<Message[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [loadingMore, setLoadingMore] = React.useState(false);
+  const [hasMore, setHasMore] = React.useState(true);
+  const [currentPage, setCurrentPage] = React.useState(0);
+  const [newMessage, setNewMessage] = React.useState('');
+  const [isSending, setIsSending] = React.useState(false);
+  const [isRizzing, setIsRizzing] = React.useState(false);
+  const [rizzResult, setRizzResult] = React.useState<{ score: number, feedback: string } | null>(null);
+  const [showRizzButton, setShowRizzButton] = React.useState(false);
+  const messagesEndRef = React.useRef<null | HTMLDivElement>(null);
+  const textareaRef = React.useRef<null | HTMLTextAreaElement>(null);
   
-  const hasCheckedRizz = useRef(false);
+  const hasCheckedRizz = React.useRef(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
         textarea.style.height = 'auto'; // Reset height
@@ -122,7 +118,7 @@ function ChatDetailScreen({ conversation, onBack, onProfileClick }: ChatDetailSc
     }
   }, [newMessage]);
   
-  const loadInitialMessages = useCallback(async () => {
+  const loadInitialMessages = React.useCallback(async () => {
     if (!user) return;
     setLoading(true);
     try {
@@ -142,17 +138,17 @@ function ChatDetailScreen({ conversation, onBack, onProfileClick }: ChatDetailSc
     }
   }, [conversation.id, user, showNotification]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     loadInitialMessages();
   }, [loadInitialMessages]);
 
-  useEffect(() => {
+  React.useEffect(() => {
       if (!loading) {
           messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
       }
   }, [messages, loading]);
   
-  const handleLoadMore = useCallback(async () => {
+  const handleLoadMore = React.useCallback(async () => {
     if (!hasMore || loadingMore) return;
     setLoadingMore(true);
     try {
@@ -170,7 +166,7 @@ function ChatDetailScreen({ conversation, onBack, onProfileClick }: ChatDetailSc
     }
   }, [hasMore, loadingMore, conversation.id, currentPage, showNotification]);
   
-  useEffect(() => {
+  React.useEffect(() => {
     if (!user) return;
     const channel = supabase.channel(`chat:${conversation.id}`)
         .on('postgres_changes', { 
@@ -322,7 +318,7 @@ function ChatDetailScreen({ conversation, onBack, onProfileClick }: ChatDetailSc
         
         <AnimatePresence>
             {showRizzButton && (
-                 <MotionDiv
+                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
@@ -336,7 +332,7 @@ function ChatDetailScreen({ conversation, onBack, onProfileClick }: ChatDetailSc
                          {isRizzing ? <LoadingSpinner /> : <Sparkles size={16}/>}
                         Check your Rizz
                     </button>
-                </MotionDiv>
+                </motion.div>
             )}
             {rizzResult && <RizzDisplay result={rizzResult} onClose={() => setRizzResult(null)} />}
         </AnimatePresence>
@@ -361,12 +357,12 @@ function ChatDetailScreen({ conversation, onBack, onProfileClick }: ChatDetailSc
                 rows={1}
                 className="flex-1 w-full p-3 bg-zinc-800 border border-zinc-700 rounded-2xl focus:outline-none focus:ring-1 focus:ring-pink-500 resize-none max-h-32"
             />
-            <MotionButton 
+            <motion.button 
               aria-label="Send message"
               whileTap={{ scale: 0.9 }}
               type="submit" disabled={isSending || !newMessage.trim()} className={`p-3 rounded-full text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r ${PREMIUM_GRADIENT}`}>
                  <Send />
-            </MotionButton>
+            </motion.button>
         </form>
       </div>
     </div>

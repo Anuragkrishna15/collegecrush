@@ -1,4 +1,6 @@
-import React from 'react';
+
+
+import * as React from 'react';
 import { motion } from 'framer-motion';
 import { Screen } from '../types.ts';
 import { NAV_ITEMS } from '../constants.tsx';
@@ -15,13 +17,14 @@ interface NavItemProps {
 }
 
 function NavItem({ item, isActive, onClick }: NavItemProps) {
+    const IconComponent = item.icon;
     return (
       <motion.button
         onClick={onClick}
         className={`flex flex-col md:flex-row items-center justify-center md:justify-start w-full md:w-auto md:px-4 md:py-3 transition-colors duration-300 ease-in-out group relative rounded-lg ${isActive ? 'md:bg-zinc-800 text-white' : 'text-zinc-500 hover:text-white hover:bg-zinc-800/50'}`}
       >
         <div className={`relative transition-colors duration-300 ${isActive ? 'text-pink-400 [text-shadow:_0_0_10px_theme(colors.pink.400)]' : 'text-zinc-400 group-hover:text-white'}`}>
-            {React.cloneElement(item.icon, { className: 'w-7 h-7' })}
+            <IconComponent className="w-7 h-7" />
         </div>
         <span className={`text-xs md:text-base mt-1 md:mt-0 md:ml-4 font-medium transition-colors duration-300 ${isActive ? 'text-white' : 'text-zinc-400 group-hover:text-white'}`}>
           {item.label}

@@ -1,14 +1,15 @@
-import { createContext, useContext } from 'react';
+
+import * as React from 'react';
 import toast from 'react-hot-toast';
 
 type NotificationContextType = {
     showNotification: (message: string, type?: 'success' | 'error' | 'info') => void;
 }
 
-export const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
+export const NotificationContext = React.createContext<NotificationContextType | undefined>(undefined);
 
 export const useNotification = (): NotificationContextType => {
-  const context = useContext(NotificationContext);
+  const context = React.useContext(NotificationContext);
   if (!context) {
     throw new Error('useNotification must be used within a NotificationProvider');
   }

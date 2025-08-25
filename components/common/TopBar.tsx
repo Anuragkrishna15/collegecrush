@@ -1,4 +1,5 @@
-import React from 'react';
+
+import * as React from 'react';
 import { Screen } from '../../types.ts';
 import { Bell, ArrowLeft } from 'lucide-react';
 import { PREMIUM_GRADIENT } from '../../constants.tsx';

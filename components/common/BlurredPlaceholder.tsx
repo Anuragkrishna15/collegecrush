@@ -1,4 +1,5 @@
-import React from 'react';
+
+import * as React from 'react';
 
 const BlurredPlaceholder: React.FC = () => {
     // Generate a random gradient for variety

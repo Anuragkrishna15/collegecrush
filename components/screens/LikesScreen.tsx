@@ -1,7 +1,5 @@
 
-
-
-import React, { useState, useEffect } from 'react';
+import * as React from 'react';
 import { fetchLikers, getProfile } from '../../services/api.ts';
 import { Profile, MembershipType, Screen } from '../../types.ts';
 import { useUser } from '../../hooks/useUser.ts';
@@ -16,22 +14,19 @@ import BlurredProfileCard from '../common/BlurredProfileCard.tsx';
 import { supabase } from '../../services/supabase.ts';
 import { getOptimizedUrl } from '../../utils/date.ts';
 
-const MotionDiv = motion.div as any;
-const MotionButton = motion.button as any;
-
 interface LikesScreenProps {
     onProfileClick: (profile: Profile) => void;
     setActiveScreen: (screen: Screen) => void;
 }
 
 const LikesScreen: React.FC<LikesScreenProps> = ({ onProfileClick, setActiveScreen }) => {
-    const [likers, setLikers] = useState<Profile[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [likers, setLikers] = React.useState<Profile[]>([]);
+    const [loading, setLoading] = React.useState(true);
     const { user } = useUser();
     const { showNotification } = useNotification();
     const isPremium = user?.membership === MembershipType.Premium;
 
-    useEffect(() => {
+    React.useEffect(() => {
         // Always fetch likers, so we can show blurred images for free users.
         if (user) {
             setLoading(true);
@@ -95,7 +90,7 @@ const LikesScreen: React.FC<LikesScreenProps> = ({ onProfileClick, setActiveScre
         return (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {likers.map((liker) => (
-                     <MotionDiv 
+                     <motion.div 
                         key={liker.id}
                         layout
                         whileHover={{ y: -5, scale: 1.05 }}
@@ -108,7 +103,7 @@ const LikesScreen: React.FC<LikesScreenProps> = ({ onProfileClick, setActiveScre
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-3">
                             <p className="text-white font-bold text-sm truncate">{liker.name}, {liker.age}</p>
                         </div>
-                     </MotionDiv>
+                     </motion.div>
                 ))}
             </div>
         );
@@ -132,12 +127,12 @@ const LikesScreen: React.FC<LikesScreenProps> = ({ onProfileClick, setActiveScre
                     <Star className={`w-16 h-16 text-yellow-400`} />
                     <h2 className={`text-2xl font-bold mt-4 bg-clip-text text-transparent bg-gradient-to-r ${PREMIUM_GRADIENT}`}>See Who Likes You!</h2>
                     <p className="text-zinc-300 mt-2 max-w-sm">Upgrade to Premium to see everyone who has already swiped right on you and match instantly.</p>
-                    <MotionButton 
+                    <motion.button 
                         whileTap={{ scale: 0.95 }}
                         onClick={handleUpgradeClick} className={`w-full max-w-xs mt-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r ${PREMIUM_GRADIENT} hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-pink-500/30`}>
                         <Lock size={16}/>
                         Unlock Likes
-                    </MotionButton>
+                    </motion.button>
                 </div>
             </div>
         );

@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
+
+import * as React from 'react';
 import LandingScreen from './LandingScreen.tsx';
 import AuthScreen from './AuthScreen.tsx';
 
 const AuthGate: React.FC = () => {
-    const [showLanding, setShowLanding] = useState(true);
+    const [showLanding, setShowLanding] = React.useState(true);
 
     if (showLanding) {
         return <LandingScreen onGetStarted={() => setShowLanding(false)} />;

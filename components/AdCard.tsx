@@ -1,4 +1,5 @@
-import React from 'react';
+
+import * as React from 'react';
 import { Ad } from '../types.ts';
 import { motion } from 'framer-motion';
 import { getOptimizedUrl } from '../utils/date.ts';

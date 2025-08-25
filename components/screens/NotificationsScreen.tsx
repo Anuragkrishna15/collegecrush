@@ -1,7 +1,5 @@
 
-
-
-import React, { useState, useEffect } from 'react';
+import * as React from 'react';
 import { fetchNotifications } from '../../services/api.ts';
 import { AppNotification, NotificationType } from '../../types.ts';
 import { useUser } from '../../hooks/useUser.ts';
@@ -48,12 +46,12 @@ const NotificationCard: React.FC<{ notification: AppNotification; onClick: () =>
 
 
 const NotificationsScreen: React.FC<NotificationsScreenProps> = ({ onMarkAllAsRead, onNotificationClick }) => {
-    const [notifications, setNotifications] = useState<AppNotification[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [notifications, setNotifications] = React.useState<AppNotification[]>([]);
+    const [loading, setLoading] = React.useState(true);
     const { user } = useUser();
     const { showNotification: showToast } = useToast();
     
-    useEffect(() => {
+    React.useEffect(() => {
         if (user) {
             setLoading(true);
             fetchNotifications(user.id)
